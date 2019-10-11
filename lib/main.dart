@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/pages/auth.dart';
 import 'package:flutter_app/pages/product.dart';
 import 'package:flutter_app/pages/products.dart';
 import 'package:flutter_app/pages/products_admin.dart';
+import 'package:flutter_app/scoped-models/main.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 void main() => runApp(MyApp());
 
@@ -9,60 +12,60 @@ class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   @override
   State<StatefulWidget> createState() {
-    return _MyAppState([]);
+    return _MyAppState();
  }}
 
  class _MyAppState extends State<MyApp> {
-  final List<Map<String, dynamic>> _products;
-
-  _MyAppState(this._products);
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-        accentColor: Colors.blue,
-        brightness: Brightness.dark,
-      ),
-      routes: {
-        '/':  (BuildContext context) => ProductsPage(_products),
-        'admin': (BuildContext context) => ProductsAdminPage(_addProduct, _removeProduct),
-      },
-      onGenerateRoute: (RouteSettings settings) {
-        final List<String> pathElements = settings.name.split('/');
-        if (pathElements[0] != '') {
-          return null;
-        }
-        if (pathElements[1] == 'product') {
-          final int index =int.parse(pathElements[2]);
+    return
+      ScopedModel<MainModel>(
+          model: MainModel(),
+          child:  _buildMaterialApp())
+     ;
+  }
 
-          return MaterialPageRoute<bool>(
-            builder: (BuildContext c) => ProductPage(
-                _products[index]['title'],
-                _products[index]['image'])
-          );
-        }
-        
-        return null;
+  MaterialApp _buildMaterialApp() {
+    return  MaterialApp(
+      theme:_buildTheme(),
+      routes: {
+        '/': (BuildContext ctx) => AuthPage(),
+        '/products':  (BuildContext context) => ProductsPage(),
+        'admin': (BuildContext context) => ProductsAdminPage(),
       },
+      onGenerateRoute: _buildDynamicRoute,
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute(builder: (BuildContext c) =>
-            ProductsPage(_products),
+            ProductsPage(),
         );
       },
     );
   }
 
-  void _removeProduct(int index) {
-    setState(() {
-      _products.removeAt(index);
-    });
+  Route _buildDynamicRoute(RouteSettings settings) {
+      final List<String> pathElements = settings.name.split('/');
+      if (pathElements[0] != '') {
+        return null;
+      }
+      if (pathElements[1] == 'product') {
+        final int index =int.parse(pathElements[2]);
+
+        return MaterialPageRoute<bool>(
+            builder: (BuildContext c) => ProductPage(index)
+        );
+      }
+
+      return null;
+    }
+
+  ThemeData _buildTheme() {
+    return  ThemeData(
+      primarySwatch: Colors.red,
+      appBarTheme: AppBarTheme(color: Colors.deepOrange),
+      accentColor: Colors.deepOrange,
+      brightness: Brightness.dark,
+      buttonColor: Colors.teal,
+    );
   }
 
-  void _addProduct(Map<String, dynamic> aProduct) {
-    setState(() {
-      _products.add(aProduct);
-    });
-  }
 }

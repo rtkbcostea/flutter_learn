@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/scoped-models/main.dart';
 import 'package:flutter_app/widgets/products/products.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductsPage extends StatelessWidget {
-  final List<Map<String, dynamic>> products;
-
-  ProductsPage(this.products);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,13 +27,18 @@ class ProductsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('easy list'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.favorite),
-            onPressed: (){},
-          ) ,
+          ScopedModelDescendant<MainModel>(
+              builder: (BuildContext ctx, Widget child, MainModel p) {
+            return IconButton(
+              icon: Icon(p.showOnlyFavs ? Icons.favorite : Icons.favorite_border),
+              onPressed: () {
+                p.toggleDisplayFavs();
+              },
+            );
+          }),
         ],
       ),
-      body: Products(products),
+      body: Products(),
     );
   }
 }

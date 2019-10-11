@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/pages/products_admin.dart';
 
 class ProductMenu extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -16,7 +14,7 @@ class ProductMenu extends StatelessWidget {
             title: Text('managed products'),
             leading: Icon(Icons.shop),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/');
+              Navigator.pushReplacementNamed(context, '/products');
             },
           ),
         ],
