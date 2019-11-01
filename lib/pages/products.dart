@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/scoped-models/main.dart';
-import 'package:flutter_app/widgets/products/products.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_app/widgets/products/products.dart';
 
-class ProductsPage extends StatelessWidget {
+class ProductsPage extends StatefulWidget {
+  final MainModel model;
+
+  ProductsPage(this.model);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ProductPageState();
+  }
+}
+
+class _ProductPageState extends State<ProductsPage> {
+  @override
+  void initState() {
+    widget.model.fetchProducts();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +47,8 @@ class ProductsPage extends StatelessWidget {
           ScopedModelDescendant<MainModel>(
               builder: (BuildContext ctx, Widget child, MainModel p) {
             return IconButton(
-              icon: Icon(p.showOnlyFavs ? Icons.favorite : Icons.favorite_border),
+              icon:
+                  Icon(p.showOnlyFavs ? Icons.favorite : Icons.favorite_border),
               onPressed: () {
                 p.toggleDisplayFavs();
               },
@@ -38,7 +56,24 @@ class ProductsPage extends StatelessWidget {
           }),
         ],
       ),
-      body: Products(),
+      body: _buildProductList(),
     );
+  }
+
+  Widget _buildProductList() {
+    return new ScopedModelDescendant(
+        builder: (BuildContext ctx, Widget child, MainModel model) {
+      Widget content = Center(child: new Text('no items'));
+      if (model.displayedProducts.length > 0 && !model.isLoading) {
+        content = Products();
+      } else if (model.isLoading) {
+        content = Center(child: CircularProgressIndicator());
+      }
+
+      return RefreshIndicator(
+          child: content,
+          onRefresh: model.fetchProducts,
+      );
+    });
   }
 }

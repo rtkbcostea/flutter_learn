@@ -18,40 +18,41 @@ class MyApp extends StatefulWidget {
  class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    final MainModel model =  MainModel();
     return
       ScopedModel<MainModel>(
-          model: MainModel(),
-          child:  _buildMaterialApp())
+          model: model,
+          child:  _buildMaterialApp(model))
      ;
   }
 
-  MaterialApp _buildMaterialApp() {
+  MaterialApp _buildMaterialApp(MainModel model) {
     return  MaterialApp(
       theme:_buildTheme(),
       routes: {
         '/': (BuildContext ctx) => AuthPage(),
-        '/products':  (BuildContext context) => ProductsPage(),
-        'admin': (BuildContext context) => ProductsAdminPage(),
+        '/products':  (BuildContext context) => ProductsPage(model),
+        'admin': (BuildContext context) => ProductsAdminPage(model),
       },
       onGenerateRoute: _buildDynamicRoute,
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute(builder: (BuildContext c) =>
-            ProductsPage(),
+            ProductsPage(model),
         );
       },
     );
   }
 
-  Route _buildDynamicRoute(RouteSettings settings) {
+  Route _buildDynamicRoute(RouteSettings settings, MainModel model) {
       final List<String> pathElements = settings.name.split('/');
       if (pathElements[0] != '') {
         return null;
       }
       if (pathElements[1] == 'product') {
-        final int index =int.parse(pathElements[2]);
-
+        final String pId=pathElements[2];
+        model.selectProduct(pId);
         return MaterialPageRoute<bool>(
-            builder: (BuildContext c) => ProductPage(index)
+            builder: (BuildContext c) => ProductPage()
         );
       }
 

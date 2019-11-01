@@ -4,7 +4,24 @@ import 'package:flutter_app/pages/product_edit.dart';
 import 'package:flutter_app/scoped-models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class ProductListPage extends StatelessWidget {
+class ProductListPage extends StatefulWidget{
+  final MainModel _model;
+
+  ProductListPage(this._model);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ProductListState();
+  }
+}
+
+class _ProductListState extends State<ProductListPage>{
+  @override
+  void initState() {
+    widget._model.fetchProducts();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
@@ -44,7 +61,7 @@ class ProductListPage extends StatelessWidget {
     final Product currentProduct = model.products[idx];
 
     return ListTile(
-      leading: CircleAvatar(backgroundImage: AssetImage(currentProduct.image)),
+      leading: CircleAvatar(backgroundImage: NetworkImage(currentProduct.image)),
       title: Text(currentProduct.title),
       subtitle: Text('\$${currentProduct.price.toString()}'),
       trailing: _buildEditButton(context, model, idx),

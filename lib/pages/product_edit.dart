@@ -42,6 +42,10 @@ class _ProductEditPage extends State<ProductEditPage> {
   }
 
   Widget _buildSubmitButton(MainModel model) {
+    if (model.isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     return RaisedButton(
       child: Icon(Icons.done),
       onPressed: () => _onSubmitProduct(model),
@@ -122,8 +126,10 @@ class _ProductEditPage extends State<ProductEditPage> {
     _formKey.currentState.validate();
     _formKey.currentState.save();
 
-    model.upsert(_formData);
-
-    Navigator.pushReplacementNamed(context, '/products').then((_) => model.selectProduct(null));
+    model.upsert(_formData).then(
+            (_) => Navigator
+            .pushReplacementNamed(context, '/products')
+            .then((_) => model.selectProduct(null))
+    );
   }
 }
