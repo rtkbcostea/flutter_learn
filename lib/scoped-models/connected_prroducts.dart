@@ -8,9 +8,9 @@ import 'package:http/http.dart' as http;
 class ConnectedProductsModel extends Model {
   final apiUrl = 'https://costel-a8ac8.firebaseio.com';
 
-  List<Product> _allProducts = [];
+  List<Product> allProducts = [];
   User authenticatedUser;
-  String _selectedProductIndex;
+  String _selectedProdId;
   bool _isLoading = false;
 
   Future<Null> addNewProduct(
@@ -34,7 +34,7 @@ class ConnectedProductsModel extends Model {
         userId: authenticatedUser.id,
         userEmail: authenticatedUser.email,
       );
-      _allProducts.add(p);
+      allProducts.add(p);
 
       notifyListeners();
     });
@@ -63,41 +63,47 @@ class ProductModel extends ConnectedProductsModel {
   //List ops
   //*******************************
   List<Product> get products {
-    return List.from(_allProducts);
+    return List.from(allProducts);
   }
 
   List<Product> get displayedProducts {
     if (_showFavs) {
-      return _allProducts.where((Product p) => p.isFavourite).toList();
+      return allProducts.where((Product p) => p.isFavourite).toList();
     }
-    return List.from(_allProducts);
+    return List.from(allProducts);
   }
 
   void selectProduct(String pId) {
-    _selectedProductIndex = pId;
+    _selectedProdId = pId;
   }
 
-  int getSelectedIndex() {
-    return _selectedProductIndex;
+  String getSelectedIndex() {
+    return _selectedProdId;
   }
 
   Product getSelectedProduct() {
-    return _selectedProductIndex == null
+    return _selectedProdId == null
         ? null
-        : products[_selectedProductIndex];
+        : products.singleWhere((Product p) => _selectedProdId == p.id);
   }
 
   //*******************************
   //CRUD
   //*******************************
-  Future<Null> removeProduct(int index) {
-    final String id = _allProducts[index].id;
-    _allProducts.removeAt(index);
+  Future<Null> removeProduct() {
+    final String id = getSelectedProduct().id;
+
+    final int idx = products.indexWhere((Product p) {
+      return p.id == id;
+    });
+
+    allProducts.removeAt(idx);
     return execWithLoadIndicator((Function after) {
       return http
           .delete('$apiUrl/products/$id.json')
           .then((http.Response resp) {
-            after();
+            _selectedProdId = null;
+        after();
       });
     });
   }
@@ -121,10 +127,12 @@ class ProductModel extends ConnectedProductsModel {
         .put('$apiUrl/products/${aProduct.id}.json',
             body: json.encode(prodData))
         .then((http.Response resp) {
-      _allProducts[_selectedProductIndex] = aProduct;
-      print('ddd');
+
       _isLoading = false;
       notifyListeners();
+
+      final int idx =  products.indexWhere((Product p) => _selectedProdId == p.id);
+      products[idx]=aProduct;
     });
   }
 
@@ -158,7 +166,7 @@ class ProductModel extends ConnectedProductsModel {
           );
           fetchedProdList.add(p);
         });
-        _allProducts = fetchedProdList;
+        allProducts = fetchedProdList;
       }
       _isLoading = false;
       notifyListeners();
@@ -178,7 +186,7 @@ class ProductModel extends ConnectedProductsModel {
   }
 
   void toggleProductFavouriteStatus() {
-    bool isCurrentlyFavourite = _allProducts[_selectedProductIndex].isFavourite;
+    bool isCurrentlyFavourite = getSelectedProduct().isFavourite;
     isCurrentlyFavourite = isCurrentlyFavourite ?? false;
     print(isCurrentlyFavourite);
     final bool newFavouriteStatus = !isCurrentlyFavourite;

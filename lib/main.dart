@@ -34,7 +34,7 @@ class MyApp extends StatefulWidget {
         '/products':  (BuildContext context) => ProductsPage(model),
         'admin': (BuildContext context) => ProductsAdminPage(model),
       },
-      onGenerateRoute: _buildDynamicRoute,
+      onGenerateRoute: (RouteSettings settings) {return _buildDynamicRoute(settings, model); },
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute(builder: (BuildContext c) =>
             ProductsPage(model),

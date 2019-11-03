@@ -38,7 +38,7 @@ class _ProductListState extends State<ProductListPage>{
                     onDismissed: (DismissDirection dir) {
                       if (dir == DismissDirection.endToStart ||
                           dir == DismissDirection.startToEnd) {
-                        model.removeProduct(idx);
+                        model.removeProduct();
                       }
                     },
                     background: Container(
@@ -72,7 +72,7 @@ class _ProductListState extends State<ProductListPage>{
     return IconButton(
       icon: Icon(Icons.edit),
       onPressed: () {
-        model.selectProduct(idx);
+        model.selectProduct(model.products[idx].id);
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (BuildContext context) {
           return ProductEditPage();

@@ -49,7 +49,7 @@ class ProductCard extends StatelessWidget {
                     icon: Icon(p.products[_prodIdx].isFavourite ? Icons.favorite : Icons.favorite_border),
                     color: Colors.red,
                     onPressed: () {
-                      p.selectProduct(_prodIdx);
+                      p.selectProduct(p.allProducts[_prodIdx].id);
                       p.toggleProductFavouriteStatus();
                     }
                );}),
