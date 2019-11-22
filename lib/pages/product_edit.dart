@@ -14,7 +14,10 @@ class ProductEditPage extends StatefulWidget {
 
 class _ProductEditPage extends State<ProductEditPage> {
   final Product _formData = Product(
-      title: null, description: null, price: null, 
+      id: null,
+      title: null, 
+      description: null, 
+      price: null, 
       userEmail: '', userId: '',
       image: 'assets/polar.jpg', isFavourite: false);
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -28,7 +31,7 @@ class _ProductEditPage extends State<ProductEditPage> {
         builder: (BuildContext ctx, Widget child, MainModel model) {
       Widget content = _buildPageContent(targetPadding, targetWidth, model);
 
-      if (model.getSelectedIndex() == null) {
+      if (model.getSelectedProdId() == null) {
         return content;
       } else {
         return Scaffold(

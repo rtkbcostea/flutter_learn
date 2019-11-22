@@ -8,15 +8,16 @@ import 'package:scoped_model/scoped_model.dart';
 import 'address_tag.dart';
 
 class ProductCard extends StatelessWidget {
-  final Product  _product;
+  final Product _product;
   final int _prodIdx;
+
   ProductCard(this._product, this._prodIdx);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Column(
-        children: <Widget> [
+        children: <Widget>[
           FadeInImage(
             image: NetworkImage(_product.image),
             placeholder: AssetImage('assets/polar.jpg'),
@@ -40,21 +41,24 @@ class ProductCard extends StatelessWidget {
             children: <Widget>[
               IconButton(
                   icon: Icon(Icons.info),
-                  onPressed: () =>
-                      Navigator.pushNamed<bool>(context, '/product/'+_prodIdx.toString())
-              ),
-              ScopedModelDescendant<MainModel>(builder:
-              (BuildContext ctx, Widget w, MainModel p) {
+                  onPressed: () => Navigator.pushNamed<bool>(
+                      context, '/product/' + _product.id.toString())),
+              ScopedModelDescendant<MainModel>(
+                  builder: (BuildContext ctx, Widget w, MainModel p) {
                 return IconButton(
-                    icon: Icon(p.products[_prodIdx].isFavourite ? Icons.favorite : Icons.favorite_border),
+                    icon: Icon(p.products[_prodIdx].isFavourite
+                        ? Icons.favorite
+                        : Icons.favorite_border),
                     color: Colors.red,
                     onPressed: () {
                       p.selectProduct(p.allProducts[_prodIdx].id);
                       p.toggleProductFavouriteStatus();
-                    }
-               );}),
-            ],),
-        ],),
+                    });
+              }),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -77,12 +77,12 @@ class ProductModel extends ConnectedProductsModel {
     _selectedProdId = pId;
   }
 
-  String getSelectedIndex() {
+  String getSelectedProdId() {
     return _selectedProdId;
   }
 
   Product getSelectedProduct() {
-    return _selectedProdId == null
+    return _selectedProdId == null || products == null
         ? null
         : products.singleWhere((Product p) => _selectedProdId == p.id);
   }
