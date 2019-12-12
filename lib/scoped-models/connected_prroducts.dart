@@ -6,7 +6,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 
 class ConnectedProductsModel extends Model {
-  final apiUrl = 'https://costel-a8ac8.firebaseio.com';
+  final apiUrl = 'https://text-s3s2.firebaseio.com';
 
   List<Product> allProducts = [];
   User authenticatedUser;
